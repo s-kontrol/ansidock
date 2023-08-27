@@ -1,10 +1,16 @@
 ---
 # tasks file for ansidocks
-- name: Run task
+- name: First check if directory exists
+  ansible.builtin.stat:
+    path: ./containers/
+  register: folder_containers
+
+- name: Setup source. Will skip if containers folder exists
   ansible.builtin.include_tasks:
     file: "setup_source.yml"
+  when: not folder_containers.stat.exists
 
-- name: Run another
+- name: Setup docker-compose files
   ansible.builtin.include_tasks:
     file: "setup_compose.yml"
 
