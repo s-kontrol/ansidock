@@ -1,0 +1,22 @@
+---
+# tasks file for ansidocks
+- name: Create directory
+  ansible.builtin.file:
+    path: ./containers/
+    state: directory
+    mode: "0775"
+
+- name: Create Containers directory
+  ansible.builtin.file:
+    path: ./containers/{{ item.container_name }}
+    state: directory
+    mode: "0775"
+  loop: "{{ containers }}"
+
+- name: Copy DockerFiles from source
+  ansible.builtin.copy:
+    src: files/dockerfiles/{{ item.container_name }}/Dockerfile
+    dest: ./containers/{{ item.container_name }}/Dockerfile
+    mode: "0775"
+  loop: "{{ containers }}"
+

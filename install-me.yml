@@ -1,0 +1,6 @@
+---
+- name: Play all
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - ansidocks

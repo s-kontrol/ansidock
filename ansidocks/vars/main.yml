@@ -1,0 +1,6 @@
+---
+# vars file for ansidocks
+containers:
+  - container_name: workspace
+  - container_name: mssql
+  #- container_name: jenkins

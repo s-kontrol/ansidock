@@ -1,0 +1,6 @@
+---
+# tasks file for ansidocks
+- name: Run task
+  ansible.builtin.include_tasks:
+    file: "setup_source.yml"
+
