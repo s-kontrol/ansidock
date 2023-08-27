@@ -4,3 +4,10 @@
   ansible.builtin.include_tasks:
     file: "setup_source.yml"
 
+- name: Run another
+  ansible.builtin.include_tasks:
+    file: "setup_compose.yml"
+
+- name: Start containers
+  ansible.builtin.include_tasks:
+    file: "start_containers.yml"

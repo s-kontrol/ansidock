@@ -1,0 +1,20 @@
+---
+- name: Play all
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Stop all
+      ansible.builtin.shell: |
+        docker-compose down
+      register: output
+      changed_when: output.rc != 0
+
+    - name: Print it
+      ansible.builtin.debug:
+        msg: "{{ output.stdout }}"
+      when: output.stdout
+
+    - name: Delete all
+      ansible.builtin.file:
+        path: ./containers/
+        state: absent

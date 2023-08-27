@@ -12,6 +12,33 @@
     state: directory
     mode: "0775"
   loop: "{{ containers }}"
+  register: containers_folders
+  loop_control:
+    label: "Creating directory on ./containers/ {{ item.container_name }}"
+
+- name: Create Data directory
+  ansible.builtin.file:
+    path: ./containers/{{ item.container_name }}/data/
+    state: directory
+    mode: "0775"
+  loop: "{{ containers }}"
+  loop_control:
+    label: "Creating directory on ./containers/{{ item.container_name }}/data/"
+
+- name: Create Log directory
+  ansible.builtin.file:
+    path: ./containers/{{ item.container_name }}/log/
+    state: directory
+    mode: "0775"
+  loop: "{{ containers }}"
+  loop_control:
+    label: "Creating directory on ./containers/{{ item.container_name }}/log/"
+
+- name: Fixing user permissions
+  ansible.builtin.shell: |
+    chown -R kontrol:kontrol ./containers/
+  register: output_chown
+  changed_when: output_chown.rc == 0
 
 - name: Copy DockerFiles from source
   ansible.builtin.copy:
@@ -19,4 +46,5 @@
     dest: ./containers/{{ item.container_name }}/Dockerfile
     mode: "0775"
   loop: "{{ containers }}"
-
+  loop_control:
+    label: "Copying Dockerfile to ./containers/{{ item.container_name }}/Dockerfile"

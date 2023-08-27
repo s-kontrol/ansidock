@@ -1,0 +1,43 @@
+{# Keep the white spaces on the file #}
+---
+services:
+{% for c in containers %}
+  {{ c.container_name }}:
+    {% if c.build|default(false) -%}
+    build:
+      context: ./containers/{{ c.container_name }}/
+      dockerfile: Dockerfile
+    {% endif -%}
+
+    image: {{ c.image }}
+
+    {% if c.volumes|default(false) -%}
+    volumes:
+      {% for volume in c.volumes -%}
+      - {{ volume }}
+      {% endfor -%}
+    {% endif %}
+
+    {% if c.ports|default(false) -%}
+    ports:
+      {% for port in (c.ports | list) -%}
+      - {{ port }}
+      {% endfor -%}
+    {% endif %}
+
+    {%if c.command |default(false) -%}
+    command: {{ c.command }}
+    {% endif %}
+
+    {% if c.user | default(false) -%}
+    user: {{ c.user }}
+    {% endif %}
+
+    {% if c.environment | default(false) -%}
+    environment:
+      {% for env in c.environment %}
+      - {{ env }}
+      {% endfor -%}
+    {% endif %}
+
+{% endfor %}
