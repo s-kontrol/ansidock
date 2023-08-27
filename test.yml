@@ -1,0 +1,22 @@
+---
+services:
+  workspace:
+    build:
+      context: ./containers/workspace/
+      dockerfile: Dockerfile
+    image: workspace:latest
+    volumes:
+      - data
+      - log
+    command: sleep infinity
+  mssql:
+    image: mcr.microsoft.com/mssql/server
+    volumes:
+      - ./data/
+      - ./log/
+    ports:
+      - 1433:1433
+    user: root
+    environment:
+            - ACCEPT_EULA=Y
+            - SA_PASSWORD=sreDBmock!A

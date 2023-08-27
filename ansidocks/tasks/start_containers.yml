@@ -1,0 +1,27 @@
+---
+- name: Build Images
+  ansible.builtin.shell: |
+    docker-compose build
+  register: outputbuild
+  failed_when: outputbuild.rc != 0
+  changed_when: outputbuild.rc == 0
+
+- name: Display build output
+  ansible.builtin.debug:
+    var: outputbuild.stdout_lines
+
+- name: Start Containers
+  ansible.builtin.shell: |
+    docker-compose up -d -V
+  register: output
+  changed_when: output.stderr_lines != ''
+
+- name: Get container list
+  ansible.builtin.shell: |
+    docker ps
+  register: running_containers
+  changed_when: output.stderr_lines != ''
+
+- name: Display container output
+  ansible.builtin.debug:
+    var: running_containers.stdout_lines

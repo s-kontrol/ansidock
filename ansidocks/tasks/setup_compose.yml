@@ -1,0 +1,11 @@
+---
+- name: Setup Compose
+  ansible.builtin.template:
+    src: templates/docker-compose.yml.j2
+    dest: docker-compose.yml
+    mode: "0666"
+- name: Remove whitespace from file
+  ansible.builtin.lineinfile:
+    path: docker-compose.yml
+    regexp: '^\s*$'
+    state: absent

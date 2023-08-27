@@ -1,30 +1,29 @@
 ---
-# vars file for ansidocks
-containers:
-  - container_name: workspace
-    build: true
+services:
+  workspace:
+    build:
+      context: ./containers/workspace/
+      dockerfile: Dockerfile
     image: workspace:latest
     volumes:
       - ./containers/workspace/data:/home/ansible/dev
       - ./containers/workspace/log:/var/log
     command: sleep infinity
-
-  - container_name: mssql
+  mssql:
     image: mcr.microsoft.com/mssql/server
-    user: root
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=sreDBmock!A
-    ports:
-      - 1433:1433
     volumes:
       - ./containers/mssql/data:/var/opt/mssql
       - ./containers/mssql/log:/var/opt/mssql/log
-
-  - container_name: jenkins
+    ports:
+      - 1433:1433
+    user: root
+    environment:
+            - ACCEPT_EULA=Y
+            - SA_PASSWORD=sreDBmock!A
+  jenkins:
     image: jenkins/jenkins:lts
+    volumes:
+      - ./containers/jenkins/data/:/var/jenkins_home
     ports:
       - 8080:8080
       - 50000:50000
-    volumes:
-      - ./containers/jenkins/data/:/var/jenkins_home
