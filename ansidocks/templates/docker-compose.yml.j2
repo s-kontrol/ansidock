@@ -5,7 +5,7 @@ services:
   {{ c.container_name }}:
     {% if c.build|default(false) -%}
     build:
-      context: ./containers/{{ c.container_name }}/
+      context: {{ container_path }}{{ c.container_name }}/
       dockerfile: Dockerfile
     {% endif -%}
 

@@ -12,7 +12,10 @@
 
 - name: Start Containers
   ansible.builtin.shell: |
-    docker-compose up -d -V
+    docker-compose up {{ item.container_name }} -d -V
+  loop: "{{ containers }}"
+  loop_control:
+    label: "Starting {{ item.container_name }}"
   register: output
   changed_when: output.stderr_lines != ''
 
@@ -20,7 +23,7 @@
   ansible.builtin.shell: |
     docker ps
   register: running_containers
-  changed_when: output.stderr_lines != ''
+  changed_when: running_containers.stderr_lines != ''
 
 - name: Display container output
   ansible.builtin.debug:

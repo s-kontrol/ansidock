@@ -1,12 +1,13 @@
 ---
 # vars file for ansidocks
+container_path: ./containers/
 containers:
   - container_name: workspace
     build: true
     image: workspace:latest
     volumes:
-      - ./containers/workspace/data:/home/ansible/dev
-      - ./containers/workspace/log:/var/log
+      - "{{ container_path }}workspace/data:/home/ansible/dev"
+      - "{{ container_path }}workspace/log:/var/log"
     command: sleep infinity
 
   - container_name: mssql
@@ -18,8 +19,8 @@ containers:
     ports:
       - 1433:1433
     volumes:
-      - ./containers/mssql/data:/var/opt/mssql
-      - ./containers/mssql/log:/var/opt/mssql/log
+      - "{{ container_path }}mssql/data:/var/opt/mssql"
+      - "{{ container_path }}mssql/log:/var/opt/mssql/log"
 
   - container_name: jenkins
     image: jenkins/jenkins:lts
@@ -27,4 +28,4 @@ containers:
       - 8080:8080
       - 50000:50000
     volumes:
-      - ./containers/jenkins/data/:/var/jenkins_home
+      - "{{ container_path }}jenkins/data/:/var/jenkins_home"

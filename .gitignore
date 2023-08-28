@@ -1,3 +1,5 @@
 **venv**
 containers/
 debugme*
+docker-compose.yml
+.vscode
