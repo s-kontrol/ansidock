@@ -21,7 +21,7 @@
   when: not ('./containers/' + item.container_name) in containers_folders_check.stdout_lines
   register: containers_folders
   loop_control:
-    label: "Creating directory on ./containers/ {{ item.container_name }}"
+    label: "Creating directory on ./containers/{{ item.container_name }}"
 
 - name: Create Data directory
   ansible.builtin.file:
