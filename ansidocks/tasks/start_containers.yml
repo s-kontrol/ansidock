@@ -14,6 +14,8 @@
   ansible.builtin.shell: |
     docker-compose up {{ item.container_name }} -d -V
   loop: "{{ containers }}"
+  loop_control:
+    label: "Starting {{ item.container_name }}"
   register: output
   changed_when: output.stderr_lines != ''
 
