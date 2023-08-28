@@ -2,63 +2,63 @@
 # tasks file for ansidocks
 - name: Create directory
   ansible.builtin.file:
-    path: ./containers/
+    path: "{{ container_path }}"
     state: directory
     mode: "0775"
 
-- name: Test
+- name: Checking for current container folders
   ansible.builtin.shell: |
-    find ./containers/ -maxdepth 1 -mindepth 1
+    find "{{ container_path }}" -maxdepth 1 -mindepth 1
   register: containers_folders_check
   changed_when: containers_folders_check.stdout_lines != ''
 
 - name: Create Containers directory
   ansible.builtin.file:
-    path: ./containers/{{ item.container_name }}
+    path: "{{ container_path }}{{ item.container_name }}"
     state: directory
     mode: "0775"
   loop: "{{ containers }}"
-  when: not ('./containers/' + item.container_name) in containers_folders_check.stdout_lines
+  when: not (container_path + item.container_name) in containers_folders_check.stdout_lines
   register: containers_folders
   loop_control:
-    label: "Creating directory on ./containers/{{ item.container_name }}"
+    label: "Creating directory on {{ container_path }}{{ item.container_name }}"
 
 - name: Create Data directory
   ansible.builtin.file:
-    path: ./containers/{{ item.container_name }}/data/
+    path: "{{ container_path }}{{ item.container_name }}/data/"
     state: directory
     mode: "0775"
   loop: "{{ containers }}"
   loop_control:
-    label: "Creating directory on ./containers/{{ item.container_name }}/data/"
-  when: not ('./containers/' + item.container_name) in containers_folders_check.stdout_lines
+    label: "Creating directory on {{ container_path }}{{ item.container_name }}/data/"
+  when: not (container_path + item.container_name) in containers_folders_check.stdout_lines
 
 - name: Create Log directory
   ansible.builtin.file:
-    path: ./containers/{{ item.container_name }}/log/
+    path: "{{ container_path }}{{ item.container_name }}/log/"
     state: directory
     mode: "0775"
   loop: "{{ containers }}"
   loop_control:
-    label: "Creating directory on ./containers/{{ item.container_name }}/log/"
-  when: not ('./containers/' + item.container_name) in containers_folders_check.stdout_lines
+    label: "Creating directory on {{ container_path }}{{ item.container_name }}/log/"
+  when: not (container_path + item.container_name) in containers_folders_check.stdout_lines
 
 - name: Fixing user permissions
   ansible.builtin.shell: |
-    chown -R $USER:$USER ./containers/{{ item.container_name }}
-  when: not ('./containers/' + item.container_name) in containers_folders_check.stdout_lines
+    chown -R $USER:$USER {{ container_path }}{{ item.container_name }}
+  when: not (container_path + item.container_name) in containers_folders_check.stdout_lines
   register: fix_user_output
   changed_when: fix_user_output.rc != 0
   loop: "{{ containers }}"
   loop_control:
-    label: "Changing ownership of ./containers/{{ item.container_name }}"
+    label: "Changing ownership of {{ container_path }}{{ item.container_name }}"
 
 - name: Copy DockerFiles from source
   ansible.builtin.copy:
     src: files/dockerfiles/{{ item.container_name }}/Dockerfile
-    dest: ./containers/{{ item.container_name }}/Dockerfile
+    dest: "{{ container_path }}{{ item.container_name }}/Dockerfile"
     mode: "0775"
   loop: "{{ containers }}"
   loop_control:
-    label: "Copying Dockerfile to ./containers/{{ item.container_name }}/Dockerfile"
-  when: not ('./containers/' + item.container_name) in containers_folders_check.stdout_lines
+    label: "Copying Dockerfile to {{ container_path }}{{ item.container_name }}/Dockerfile"
+  when: not (container_path + item.container_name) in containers_folders_check.stdout_lines

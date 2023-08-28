@@ -28,3 +28,5 @@ containers:
       - 50000:50000
     volumes:
       - ./containers/jenkins/data/:/var/jenkins_home
+
+container_path: ./containers/
