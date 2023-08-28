@@ -2,6 +2,5 @@
 - name: Play all
   hosts: localhost
   gather_facts: false
-  become: true
   roles:
     - ansidocks
