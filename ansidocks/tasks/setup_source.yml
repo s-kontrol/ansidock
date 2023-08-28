@@ -6,12 +6,19 @@
     state: directory
     mode: "0775"
 
+- name: Test
+  ansible.builtin.shell: |
+    find ./containers/ -maxdepth 1 -mindepth 1
+  register: containers_folders_check
+  changed_when: containers_folders_check.stdout_lines != ''
+
 - name: Create Containers directory
   ansible.builtin.file:
     path: ./containers/{{ item.container_name }}
     state: directory
     mode: "0775"
   loop: "{{ containers }}"
+  when: not ('./containers/' + item.container_name) in containers_folders_check.stdout_lines
   register: containers_folders
   loop_control:
     label: "Creating directory on ./containers/ {{ item.container_name }}"
@@ -24,6 +31,7 @@
   loop: "{{ containers }}"
   loop_control:
     label: "Creating directory on ./containers/{{ item.container_name }}/data/"
+  when: not ('./containers/' + item.container_name) in containers_folders_check.stdout_lines
 
 - name: Create Log directory
   ansible.builtin.file:
@@ -33,12 +41,17 @@
   loop: "{{ containers }}"
   loop_control:
     label: "Creating directory on ./containers/{{ item.container_name }}/log/"
+  when: not ('./containers/' + item.container_name) in containers_folders_check.stdout_lines
 
 - name: Fixing user permissions
   ansible.builtin.shell: |
-    chown -R $USER:$USER ./containers/
-  register: output_chown
-  changed_when: output_chown.rc == 0
+    chown -R $USER:$USER ./containers/{{ item.container_name }}
+  when: not ('./containers/' + item.container_name) in containers_folders_check.stdout_lines
+  register: fix_user_output
+  changed_when: fix_user_output.rc != 0
+  loop: "{{ containers }}"
+  loop_control:
+    label: "Changing ownership of ./containers/{{ item.container_name }}"
 
 - name: Copy DockerFiles from source
   ansible.builtin.copy:
@@ -48,3 +61,4 @@
   loop: "{{ containers }}"
   loop_control:
     label: "Copying Dockerfile to ./containers/{{ item.container_name }}/Dockerfile"
+  when: not ('./containers/' + item.container_name) in containers_folders_check.stdout_lines
