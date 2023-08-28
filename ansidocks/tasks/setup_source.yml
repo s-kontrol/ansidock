@@ -8,7 +8,7 @@
 
 - name: Checking for current container folders
   ansible.builtin.shell: |
-    find "{{ container_path }}" -maxdepth 1 -mindepth 1
+    find {{ container_path }} -maxdepth 1 -mindepth 1
   register: containers_folders_check
   changed_when: containers_folders_check.stdout_lines != ''
 
